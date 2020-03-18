@@ -46,5 +46,5 @@ func FromZones(networkCidr string, zones []string) (infrav1.Subnets, error) {
 }
 
 func calculateSubnet(network *net.IPNet, zones []string, index int) (*net.IPNet, error) {
-	return cidr.Subnet(network, int(math.Ceil(math.Log2(float64(len(zones))))), index)
+	return cidr.Subnet(network, int(math.Max(1.0, math.Ceil(math.Log2(float64(len(zones)))))), index)
 }

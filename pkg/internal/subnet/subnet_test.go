@@ -1,6 +1,8 @@
 package subnet
 
 import (
+	"encoding/json"
+	"reflect"
 	"testing"
 
 	infrav1 "sigs.k8s.io/cluster-api-provider-aws/api/v1alpha3"
@@ -8,11 +10,13 @@ import (
 
 func TestFromZones(t *testing.T) {
 	testCases := []struct {
+		name     string
 		zones    []string
 		cidr     string
 		expected infrav1.Subnets
 	}{
 		{
+			name:  "us-east-1 with standard default CIDR",
 			zones: []string{"us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"},
 			cidr:  "10.0.0.0/16",
 			expected: infrav1.Subnets{
@@ -79,6 +83,7 @@ func TestFromZones(t *testing.T) {
 			},
 		},
 		{
+			name:  "us-east-2 with alternate CIDR",
 			zones: []string{"us-east-2a", "us-east-2b", "us-east-2c"},
 			cidr:  "192.168.0.0/16",
 			expected: infrav1.Subnets{
@@ -115,6 +120,7 @@ func TestFromZones(t *testing.T) {
 			},
 		},
 		{
+			name:  "smaller CIDR",
 			zones: []string{"us-east-2a", "us-east-2b", "us-east-2c"},
 			cidr:  "192.168.0.0/20",
 			expected: infrav1.Subnets{
@@ -150,35 +156,49 @@ func TestFromZones(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:  "one zone",
+			zones: []string{"us-east-5a"},
+			cidr:  "10.0.0.0/16",
+			expected: infrav1.Subnets{
+				{
+					IsPublic:         true,
+					CidrBlock:        "10.0.0.0/18",
+					AvailabilityZone: "us-east-5a",
+				},
+				{
+					IsPublic:         false,
+					CidrBlock:        "10.0.128.0/17",
+					AvailabilityZone: "us-east-5a",
+				},
+			},
+		},
 	}
-	for _, c := range testCases {
-		actual, err := FromZones(c.cidr, c.zones)
-		if err != nil {
-			t.Errorf("failed to calculate subnets: %v", err)
-			return
-		}
-		if len(c.expected) != len(actual) {
-			t.Errorf("expected to have %d subnets, got %d", len(c.expected), len(actual))
-			return
-		}
-		for _, e := range c.expected {
-			var found bool
-			for _, a := range actual {
-				if e.CidrBlock == a.CidrBlock &&
-					e.IsPublic == a.IsPublic &&
-					e.AvailabilityZone == a.AvailabilityZone {
-					found = true
-				}
-			}
-			if !found {
-				var printable []infrav1.SubnetSpec
-				for i := 0; i < len(actual); i++ {
-					printable = append(printable, *actual[i])
-				}
-
-				t.Errorf("failed to find subnet %#v in %#v", e, printable)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			subnets, err := FromZones(tc.cidr, tc.zones)
+			if err != nil {
+				t.Errorf("failed to calculate subnets: %v", err)
 				return
 			}
-		}
+			if len(tc.expected) != len(subnets) {
+				t.Errorf("expected to have %d subnets, got %d", len(tc.expected), len(subnets))
+				return
+			}
+			for _, exp := range tc.expected {
+				var found bool
+				for _, sn := range subnets {
+					if reflect.DeepEqual(exp, sn) {
+						found = true
+					}
+				}
+				if !found {
+					expected, _ := json.MarshalIndent(exp, "", "\t")
+					actual, _ := json.MarshalIndent(subnets, "", "\t")
+					t.Errorf("Expected to find %s in %s", string(expected), string(actual))
+					return
+				}
+			}
+		})
 	}
 }
