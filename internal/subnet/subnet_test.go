@@ -338,7 +338,7 @@ func TestFromZonesSupportsExistingSubnets(t *testing.T) {
 			},
 		},
 		{
-			name:            "large existing subnets leave little leftover",
+			name:            "large existing subnets",
 			zones:           []string{"us-east-2a", "us-east-2b", "us-east-2c"},
 			existingSubnets: []string{"10.0.0.0/17", "10.0.128.0/18"},
 			cidr:            "10.0.0.0/16",
