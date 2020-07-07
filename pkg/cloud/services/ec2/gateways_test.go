@@ -96,7 +96,6 @@ func TestReconcileInternetGateways(t *testing.T) {
 					VpcId:             aws.String("vpc-gateways"),
 				})).
 					Return(&ec2.AttachInternetGatewayOutput{}, nil)
-
 			},
 		},
 	}
@@ -120,7 +119,6 @@ func TestReconcileInternetGateways(t *testing.T) {
 					},
 				},
 			})
-
 			if err != nil {
 				t.Fatalf("Failed to create test context: %v", err)
 			}

@@ -128,7 +128,6 @@ func getResourcesByCluster(svc *awstags.ResourceGroupsTaggingAPI, name string) (
 }
 
 func applyNewTags(svc *awstags.ResourceGroupsTaggingAPI, arns []*string, name string) error {
-
 	for i := 0; i <= (len(arns) / maxARNs); i++ {
 		end := (i + 1) * maxARNs
 		if end > len(arns) {

@@ -45,7 +45,6 @@ const (
 )
 
 func TestReconcileSubnets(t *testing.T) {
-
 	testCases := []struct {
 		name          string
 		input         *infrav1.NetworkSpec
@@ -566,7 +565,6 @@ func TestReconcileSubnets(t *testing.T) {
 				}).
 					Return(&ec2.ModifySubnetAttributeOutput{}, nil).
 					After(secondSubnet)
-
 			},
 		},
 		{
@@ -726,7 +724,6 @@ func TestReconcileSubnets(t *testing.T) {
 					After(secondSubnet)
 
 				m.CreateTags(gomock.AssignableToTypeOf(&ec2.CreateTagsInput{}))
-
 			},
 		},
 		{
@@ -891,7 +888,6 @@ func TestReconcileSubnets(t *testing.T) {
 					After(zone2PrivateSubnet)
 
 				m.CreateTags(gomock.AssignableToTypeOf(&ec2.CreateTagsInput{}))
-
 			},
 		},
 		{

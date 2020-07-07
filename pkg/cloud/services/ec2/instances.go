@@ -494,7 +494,7 @@ func (s *Service) UpdateInstanceSecurityGroups(instanceID string, ids []string) 
 // This will be called if there is anything to create (update) or delete.
 // We may not always have to perform each action, so we check what we're
 // receiving to avoid calling AWS if we don't need to.
-func (s *Service) UpdateResourceTags(resourceID *string, create map[string]string, remove map[string]string) error {
+func (s *Service) UpdateResourceTags(resourceID *string, create, remove map[string]string) error {
 	s.scope.V(2).Info("Attempting to update tags on resource", "resource-id", *resourceID)
 
 	// If we have anything to create or update

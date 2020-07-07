@@ -235,7 +235,6 @@ func (r *AWSMachineReconciler) SetupWithManager(mgr ctrl.Manager, options contro
 			},
 		).
 		Build(r)
-
 	if err != nil {
 		return err
 	}

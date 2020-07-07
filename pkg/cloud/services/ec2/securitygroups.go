@@ -18,6 +18,7 @@ package ec2
 
 import (
 	"fmt"
+
 	"sigs.k8s.io/cluster-api/util/conditions"
 
 	errlist "k8s.io/apimachinery/pkg/util/errors"
@@ -224,7 +225,6 @@ func (s *Service) describeClusterOwnedSecurityGroups() ([]infrav1.SecurityGroup,
 		}
 		return true
 	})
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to describe cluster-owned security groups in vpc %q", s.scope.VPC().ID)
 	}
@@ -272,7 +272,6 @@ func (s *Service) createSecurityGroup(role infrav1.SecurityGroupRole, input *ec2
 		GroupName:   input.GroupName,
 		Description: aws.String(fmt.Sprintf("Kubernetes cluster %s: %s", s.scope.Name(), role)),
 	})
-
 	if err != nil {
 		record.Warnf(s.scope.AWSCluster, "FailedCreateSecurityGroup", "Failed to create managed SecurityGroup for Role %q: %v", role, err)
 		return errors.Wrapf(err, "failed to create security group %q in vpc %q", role, aws.StringValue(input.VpcId))
@@ -479,7 +478,7 @@ func (s *Service) getDefaultSecurityGroup(role infrav1.SecurityGroupRole) *ec2.S
 	}
 }
 
-func (s *Service) getSecurityGroupTagParams(name string, id string, role infrav1.SecurityGroupRole) infrav1.BuildParams {
+func (s *Service) getSecurityGroupTagParams(name, id string, role infrav1.SecurityGroupRole) infrav1.BuildParams {
 	additional := s.scope.AdditionalTags()
 	if role == infrav1.SecurityGroupLB {
 		additional[infrav1.ClusterAWSCloudProviderTagKey(s.scope.Name())] = string(infrav1.ResourceLifecycleOwned)

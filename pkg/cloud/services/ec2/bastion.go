@@ -19,6 +19,7 @@ package ec2
 import (
 	"encoding/base64"
 	"fmt"
+
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/cluster-api/util/conditions"
 
@@ -38,7 +39,6 @@ const (
 
 // ReconcileBastion ensures a bastion is created for the cluster
 func (s *Service) ReconcileBastion() error {
-
 	if !s.scope.AWSCluster.Spec.Bastion.Enabled {
 		s.scope.V(4).Info("Skipping bastion reconcile")
 		_, err := s.describeBastionInstance()

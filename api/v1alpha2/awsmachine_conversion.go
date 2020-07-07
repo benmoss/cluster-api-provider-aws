@@ -43,7 +43,7 @@ func (src *AWSMachine) ConvertTo(dstRaw conversion.Hub) error { // nolint
 	return nil
 }
 
-func restoreAWSMachineSpec(restored *infrav1alpha3.AWSMachineSpec, dst *infrav1alpha3.AWSMachineSpec) {
+func restoreAWSMachineSpec(restored, dst *infrav1alpha3.AWSMachineSpec) {
 	dst.ImageLookupFormat = restored.ImageLookupFormat
 	dst.ImageLookupBaseOS = restored.ImageLookupBaseOS
 
@@ -130,7 +130,6 @@ func Convert_v1alpha3_AWSMachineSpec_To_v1alpha2_AWSMachineSpec(in *infrav1alpha
 	// Manually convert SSHKeyName
 	if in.SSHKeyName != nil {
 		out.SSHKeyName = *in.SSHKeyName
-
 	}
 	out.CloudInit = &CloudInit{}
 	if err := Convert_v1alpha3_CloudInit_To_v1alpha2_CloudInit(&in.CloudInit, out.CloudInit, s); err != nil {
