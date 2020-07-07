@@ -65,7 +65,7 @@ func (s *Service) ReconcileBastion() error {
 
 	// Describe bastion instance, if any.
 	instance, err := s.describeBastionInstance()
-	if awserrors.IsNotFound(err) {
+	if awserrors.IsNotFound(err) { // nolint:nestif
 		if !conditions.Has(s.scope.AWSCluster, infrav1.BastionHostReadyCondition) {
 			conditions.MarkFalse(s.scope.AWSCluster, infrav1.BastionHostReadyCondition, infrav1.BastionCreationStartedReason, clusterv1.ConditionSeverityInfo, "")
 			if err := s.scope.PatchObject(); err != nil {

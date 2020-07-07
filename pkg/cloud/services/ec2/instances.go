@@ -128,7 +128,7 @@ func (s *Service) CreateInstance(scope *scope.MachineScope, userData []byte) (*i
 
 	var err error
 	// Pick image from the machine configuration, or use a default one.
-	if scope.AWSMachine.Spec.AMI.ID != nil {
+	if scope.AWSMachine.Spec.AMI.ID != nil { // nolint:nestif
 		input.ImageID = *scope.AWSMachine.Spec.AMI.ID
 	} else {
 		if scope.Machine.Spec.Version == nil {
@@ -362,7 +362,7 @@ func (s *Service) runInstance(role string, i *infrav1.Instance) (*infrav1.Instan
 		}
 	}
 
-	if i.RootVolume != nil {
+	if i.RootVolume != nil { // nolint:nestif
 		rootDeviceName, err := s.getImageRootDevice(i.ImageID)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get root volume from image %q", i.ImageID)

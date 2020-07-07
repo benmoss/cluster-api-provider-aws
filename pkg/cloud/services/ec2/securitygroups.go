@@ -507,7 +507,7 @@ func ingressRuleToSDKType(i *infrav1.IngressRule) (res *ec2.IpPermission) {
 			FromPort:   aws.Int64(i.FromPort),
 			ToPort:     aws.Int64(i.ToPort),
 		}
-	default:
+	case infrav1.SecurityGroupProtocolAll, infrav1.SecurityGroupProtocolIPinIP:
 		res = &ec2.IpPermission{
 			IpProtocol: aws.String(string(i.Protocol)),
 		}
